@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 
 // Trust the proxy to get accurate client IPs
-app.set('trust proxy', true);
+// app.set('trust proxy', true);
 
 // Route to get IP address
 app.get("/get-ip", (req, res) => {
