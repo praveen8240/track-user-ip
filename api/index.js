@@ -52,6 +52,11 @@ app.get("/ip-test", (req, res) => {
   `);
 });
 
+app.get("/real", (req, res) => {
+  let userIP = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
+  res.json({ ip: userIP });
+});
+
 
 app.get("/ip-details", (req, res) => {
   res.send(`
