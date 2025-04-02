@@ -53,8 +53,39 @@ app.get("/ip-test", (req, res) => {
 });
 
 app.get("/real", (req, res) => {
-  let userIP = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
-  res.json({ ip: userIP });
+  res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <title>Network Information</title>
+          <script>
+              async function getLocalIP() {
+                  return new Promise((resolve, reject) => {
+                      const rtc = new RTCPeerConnection({ iceServers: [] });
+                      rtc.createDataChannel("");
+                      rtc.createOffer().then(offer => rtc.setLocalDescription(offer));
+                      rtc.onicecandidate = event => {
+                          if (event.candidate) {
+                              resolve(event.candidate.address);
+                          }
+                      };
+                      setTimeout(() => reject("Failed to get IP"), 5000);
+                  });
+              }
+
+              getLocalIP()
+                  .then(ip => {
+                      document.getElementById("local-ip").innerText = ip;
+                  })
+                  .catch(err => console.error(err));
+          </script>
+      </head>
+      <body>
+          <h1>Network Information</h1>
+          <p><strong>Local (Private) IP:</strong> <span id="local-ip">Fetching...</span></p>
+      </body>
+      </html>
+  `);
 });
 
 
