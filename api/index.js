@@ -52,5 +52,37 @@ app.get("/ip-test", (req, res) => {
   `);
 });
 
+
+app.get("/ip-details", (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Network Information</title>
+    </head>
+    <body>
+      <h1>Network Information</h1>
+      <div id="publicInfo">Loading public info...</div>
+      <p>Note: Detailed local network information cannot be accessed through a browser.</p>
+      
+      <script>
+        // This will only show limited network information
+        fetch('/get-ip')
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('publicInfo').innerHTML = 
+              '<strong>Your Public IP:</strong> ' + data.ip;
+            
+            // We can add more info like browser details
+            const browserInfo = navigator.userAgent;
+            const div = document.createElement('div');
+            div.innerHTML = '<strong>Browser Info:</strong> ' + browserInfo;
+            document.body.appendChild(div);
+          });
+      </script>
+    </body>
+    </html>
+  `);
+});
 // For Vercel, we need to export the Express app as the default module
 module.exports = app;
